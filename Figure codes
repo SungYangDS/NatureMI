@@ -1,0 +1,123 @@
+#Figure 3B code
+
+#' Generate simulated random data
+#' Generate violin plot for these randomized dataset
+#' Draw/ simulate out a bad accuracy and a good accuracy dataset 
+#' coord_flip() is for creating horizontal violin plot
+#' 
+#' 
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(forcats)
+library(hrbrthemes)
+library(viridis)
+library(RColorBrewer)
+accuracy <- c(rnorm(100, mean = 60, sd =9),rnorm(100, mean = 92, sd =3), rnorm(100, mean = 20, sd=6), rnorm(100,mean = 40, sd = 8))
+
+IV <- c(rep("IV4", 100), rep("IV3", 100), rep("IV2",100), rep("IV1", 100))
+
+fig3b <- data.frame(IV, accuracy)
+write.csv(fig3b, "genes.csv", quote = F, row.names = F)
+fig3b <- read.csv("fig3b.csv")
+
+rnorm(100,mean = 92, sd = 2.4)
+fig3b$accuracy[101:200] <- c(rnorm(100,96,4))
+
+
+jpeg("fig3b.jpeg", width = 720, height = 720)
+#ggplot(fig3b, aes(x = IV, y = accuracy)) + geom_violin() + coord_flip() +theme_bw()
+ggplot(fig3b, aes(x=IV, y = accuracy, col = IV)) + geom_violin() + geom_boxplot(width = 0.1)+ coord_flip() + scale_y_continuous(breaks=seq(0,95,30))+theme_bw() + 
+  theme(axis.title.x = element_blank(),axis.text.x = element_blank(), axis.title.y = element_blank(), 
+        axis.text.y = element_blank(),
+        legend.position = "none")
+dev.off()        
+ggplot(fig3b, aes(x=IV, y = accuracy, col = IV)) + geom_violin() + geom_boxplot(width = 0.1)+ coord_flip() + scale_y_continuous(breaks=seq(0,95,30))+theme_bw()
+
+
+
+#' Figure 3C - RSS Significant 
+#' Red Histogram or Barchart(See how)
+#' Meant to be like that 
+#' 
+pdf("Fig3C_1.pdf")
+set.seed(2607)
+expected_dist <- rbinom(1000, 7, 0.46)
+hist(expected_dist, col="red", ylim=c(0,1000), xlim=c(0,7), main=NULL)
+
+#' Creation of blue histogram to be side by side 
+#' Hardcoding it so that we don't to constantly run the data
+#' 
+
+blue_hist <- rep(c(3,2,1), c(930,50,20))
+hist(blue_hist,col = "blue", add = T)
+
+#' Yellow Histogram
+known_sig <- read.table("lowest_pval_PC1to10_48_sig_7GDS.txt", header=T,sep="\t")
+across_known_sig <- c()
+for (i in 1:nrow(known_sig))
+{
+  across_known_sig <- append(across_known_sig, sum(known_sig[i,3:9] <= 0.05))
+}  
+hist(across_known_sig, col="yellow", add=T, lty=2)
+dev.off()
+
+
+
+
+#' Figure 3C - Follows binomial 
+#'  
+pdf("Fig3C_2.pdf")
+expected_dist <- rbinom(1000, 7, 0.46)
+hist(expected_dist, col="red", ylim=c(0,1000), xlim=c(0,7), main=NULL)
+blue_hist_2 <- rep(c(3,2,1,0), c(100,600,250,50))
+hist(blue_hist_2,col = "blue", add = T)
+hist(across_known_sig, col="yellow", add=T, lty=2)
+dev.off()
+
+
+#' Figure 3C - All above 3
+#' 
+pdf("Fig3C_3.pdf")
+hist(expected_dist, col="red", ylim=c(0,1000), xlim=c(0,7), main=NULL)
+blue_hist_3 <- rep(c(4,5,6,7), c(99,501,320,80))
+hist(blue_hist_3,col = "blue", add = T)
+hist(across_known_sig, col="yellow", add=T, lty=2)
+dev.off()
+
+
+
+
+#######################################
+pdf("Fig3C.pdf", width = 11, height = 8)
+par(mfrow = c(2,2))
+set.seed(2607)
+expected_dist <- rbinom(1000, 7, 0.46)
+hist(expected_dist, col="red", ylim=c(0,1000), xlim=c(0,7), main=NULL)
+
+
+blue_hist <- rep(c(3,2,1), c(930,50,20))
+hist(blue_hist,col = "blue", add = T)
+
+known_sig <- read.table("lowest_pval_PC1to10_48_sig_7GDS.txt", header=T,sep="\t")
+across_known_sig <- c()
+for (i in 1:nrow(known_sig))
+{
+  across_known_sig <- append(across_known_sig, sum(known_sig[i,3:9] <= 0.05))
+}  
+hist(across_known_sig, col="yellow", add=T, lty=2)
+
+
+expected_dist <- rbinom(1000, 7, 0.46)
+hist(expected_dist, col="red", ylim=c(0,1000), xlim=c(0,7), main=NULL)
+blue_hist_2 <- rep(c(3,2,1,0), c(100,600,250,50))
+hist(blue_hist_2,col = "blue", add = T)
+hist(across_known_sig, col="yellow", add=T, lty=2)
+
+
+hist(expected_dist, col="red", ylim=c(0,1000), xlim=c(0,7), main=NULL)
+blue_hist_3 <- rep(c(4,5,6,7), c(99,501,320,80))
+hist(blue_hist_3,col = "blue", add = T)
+hist(across_known_sig, col="yellow", add=T, lty=2)
+dev.off()
